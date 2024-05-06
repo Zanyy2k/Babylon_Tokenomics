@@ -1,4 +1,5 @@
 import streamlit as st
+import plotly.express as px
 import plotly.graph_objects as go
 
 from unlock_tab import generate_unlock_df
@@ -418,21 +419,24 @@ with profitability_tab:
     # Filter DataFrame based on the selected 'Number of Nodes'
     filtered_df = profitability_df[profitability_df["Number of Nodes"] == selected_node]
 
-    # Create a subplot for each column in y_columns
-    fig = go.Figure()
-    for column in y_columns:
-        fig.add_trace(
-            go.Scatter(
-                x=filtered_df["Annual Cost"],
-                y=filtered_df[column],
-                mode="lines",
-                name=column,
-            )
-        )
+    # Define the token price ranges
+    # Convert start_token_price and end_token_price to integers
+    start_token_price = int(start_token_price * 10)  # Multiply by 10 to handle decimal values
+    end_token_price = int(end_token_price * 10)
 
-    fig.update_layout(
-        xaxis_title="Annual Cost", yaxis_title="Value", title="Profitability Analysis"
-    )
+    # Define the token price ranges
+    token_price_ranges = [f'${price / 10}' for price in range(start_token_price, (end_token_price + 1), 5)]
+
+    melted_df = filtered_df.melt(id_vars=["Number of Nodes", "Annual Cost"], value_vars=token_price_ranges, var_name="Token Price Range", value_name="Value")
+    
+    # Create a subplot for each column in y_columns
+    fig = px.line(melted_df, x="Token Price Range", y="Value", color="Annual Cost",
+              title="Profitability (50 Nodes)",
+              labels={"Value": "Value", "Token Price Range": "Annual Profit Per Node", "Annual Cost": "Annual Cost"},
+              line_group="Number of Nodes", 
+              line_dash="Number of Nodes",   
+              log_y=True
+              )
 
     # Display the subplot in Streamlit
     st.plotly_chart(fig)

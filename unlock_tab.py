@@ -3,15 +3,16 @@ from helper_functions import initial_df
 
 
 def calculate_stake_drops(row, token_issue_date, stake_drops_total):
-    if token_issue_date <= row["Date"] < token_issue_date + pd.DateOffset(years=1):
+
+    if token_issue_date <= row["Date"] < (token_issue_date + pd.DateOffset(years=1)).date():
         return int(stake_drops_total / 12 / 2)
     elif (
-        token_issue_date + pd.DateOffset(years=1)
+        (token_issue_date + pd.DateOffset(years=1)).date()
         <= row["Date"]
-        < token_issue_date + pd.DateOffset(years=2)
+        < (token_issue_date + pd.DateOffset(years=2)).date()
     ):
         return stake_drops_total / 48
-    elif row["Date"] >= token_issue_date + pd.DateOffset(years=2):
+    elif row["Date"] >= (token_issue_date + pd.DateOffset(years=2)).date():
         return stake_drops_total / 96
     else:
         return row["Stake Drops"]
@@ -20,23 +21,23 @@ def calculate_stake_drops(row, token_issue_date, stake_drops_total):
 def calculate_future_community_incentives(
     row, token_issue_date, future_community_incentives_total
 ):
-    if token_issue_date <= row["Date"] < token_issue_date + pd.DateOffset(years=1):
+    if token_issue_date <= row["Date"] < (token_issue_date + pd.DateOffset(years=1)).date():
         return 0
-    elif row["Date"] >= token_issue_date + pd.DateOffset(years=1):
+    elif row["Date"] >= (token_issue_date + pd.DateOffset(years=1)).date():
         return future_community_incentives_total / 36
 
 
 def calculate_investor(row, token_issue_date, investor_total):
-    if token_issue_date <= row["Date"] < token_issue_date + pd.DateOffset(years=1):
+    if token_issue_date <= row["Date"] < (token_issue_date + pd.DateOffset(years=1)).date():
         return 0
-    elif row["Date"] >= token_issue_date + pd.DateOffset(years=1):
+    elif row["Date"] >= (token_issue_date + pd.DateOffset(years=1)).date():
         return investor_total / 36
 
 
 def calculate_early_contributors(row, token_issue_date, early_contributors_total):
-    if token_issue_date <= row["Date"] < token_issue_date + pd.DateOffset(years=1):
+    if token_issue_date <= row["Date"] < (token_issue_date + pd.DateOffset(years=1)).date():
         return 0
-    elif row["Date"] >= token_issue_date + pd.DateOffset(years=1):
+    elif row["Date"] >= (token_issue_date + pd.DateOffset(years=1)).date():
         return early_contributors_total / 36
 
 
